@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
 from subprocess import Popen, PIPE, DEVNULL
 from yt_dlp import YoutubeDL
 
@@ -9,54 +9,50 @@ ydl_opts = {
     "extract_flat": "in_playlist"
 }
 
+# TODO; auth, spotify, stremlink
 def get_stream(url: str) -> str:
     with YoutubeDL(ydl_opts) as ydl:
         data = ydl.extract_info(url, download=False)
-        # very good code ;)
+        # TODO: very good code ;)
         if data.get("_type") == "playlist":
             return ydl.extract_info(data.get("entries")[0].get("url"), download=False).get("url")
         return data.get("url")
 
 app = Flask(__name__)
 
-# support stereo and 5.1
+# TODO: support stereo and 5.1
 
-@app.route('/yt/<v>')
-def stream_audio(v: str):
-    # allow format recognition by for example mpv
-    if v.endswith('.dfpwm'):
-        v = v[:-6]
+@app.route('/audio.dfpwm')
+def stream_audio():
+    url = request.args.get("url")
+    process = Popen([
+        "ffmpeg",
+        "-i",
+        get_stream(url),
+        "-f",
+        "dfpwm",
+        "-ac",
+        "1",
+        "-ar",
+        "48000",
+        "-"
+    ], stdout=PIPE, stderr=DEVNULL)
+
     def generate():
         # TODO: dont process more than needed
-        url = get_stream(v)
-        with Popen(
-                [
-                    "ffmpeg",
-                    "-i",
-                    url,
-                    "-f",
-                    "dfpwm",
-                    "-ac",
-                    "1",
-                    "-ar",
-                    "48000",
-                    "-"
-                ],
-                stdout=PIPE,
-                stderr=DEVNULL
-        ) as process:
-            while True:
-                # TODO: need to buffer
-                data = process.stdout.read(16)
-                if not data:
-                    break
-                yield data
+        while True:
+            # TODO: need to buffer
+            data = process.stdout.read(16)
+            if not data:
+                break
+            yield data
 
-    # kill proc on requst closr
-
-    response = Response(generate(), mimetype="audio/dfpwm;rate=48000;channels=1")
-    response.headers["Content-Disposition"] = f'attachment;filename="{v}.dfpwm"'
-    return response
+    # TODO: what is stream_with_context
+    return Response(
+        generate(),
+        mimetype="audio/dfpwm;rate=48000;channels=1",
+        headers={"Content-Disposition": 'attachment;filename="audio.dfpwm"'}
+    )
 
 def main():
     app.run(host="0.0.0.0", port=8000)
