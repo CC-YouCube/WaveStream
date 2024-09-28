@@ -38,8 +38,11 @@ def stream_audio():
             "1",
             "-ar",
             "48000",
-            # TODO: test those boys out
-            #"-preset", "fast",
+            # TODO: https://stackoverflow.com/questions/16658873/how-to-minimize-the-delay-in-a-live-streaming-with-ffmpeg
+            # TODO: https://superuser.com/questions/490683/cheat-sheets-and-preset-settings-that-actually-work-with-ffmpeg-1-0
+            # TODO: https://ffmpeg-api.com/learn/ffmpeg/recipe/live-streaming
+            # TODO: https://superuser.com/questions/155305/how-many-threads-does-ffmpeg-use-by-default
+            #"-preset", "ultrafast",
             #"-tune", "zerolatency",
             #"-threads", "4",
             "-"
