@@ -1,10 +1,8 @@
-from os import getenv
+from . import img_bp
 import requests
 import numpy as np
-from flask import Flask, Response, request
+from flask import Response, request
 from PIL import Image
-
-app = Flask(__name__)
 
 CC_COLORS = [
     (240, 240, 240), (242, 178, 51), (229, 127, 216), (153, 178, 242),
@@ -19,8 +17,9 @@ palette.putpalette(
     list(CC_COLORS[-1]) * (256 - len(CC_COLORS))
 )
 
-@app.route("/img.nft")
+@img_bp.route('/nft')
 def get_data():
+    # TODO: Set max width, height
     width = int(request.args.get("width", 51))
     height = int(request.args.get("height", 19))
     dither = request.args.get("dither", "false").lower() == "true"
@@ -32,12 +31,3 @@ def get_data():
     response_data = "\n".join("".join(format(pixel, "x") for pixel in row) for row in image_data)
 
     return Response(response_data, mimetype="text/plain")
-
-def main():
-    app.run(
-        host=getenv('HOST', '0.0.0.0'),
-        port=int(getenv('PORT', 8000))
-    )
-
-if __name__ == "__main__":
-    main()

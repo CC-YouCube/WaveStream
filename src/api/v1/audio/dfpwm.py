@@ -1,6 +1,7 @@
-from flask import Flask, Response, request, stream_with_context
+from flask import Response, request, stream_with_context
 from subprocess import Popen, PIPE, DEVNULL
 from yt_dlp import YoutubeDL
+from . import audio_bp
 
 ydl_opts = {
     "format": "worstaudio*",
@@ -18,13 +19,11 @@ def get_stream(url: str) -> str:
             return ydl.extract_info(data.get("entries")[0].get("url"), download=False).get("url")
         return data.get("url")
 
-app = Flask(__name__)
-
 # TODO: support stereo and 5.1 (if possible)
 # TODO: Allow real seeking (if possible)
 
-@app.route('/audio.pcm')
-def stream_audio():
+@audio_bp.route('/dfpwm')
+def stream_dfpwm():
     # TODO: add option to seek before
     url = request.args.get("url")
     process = Popen(
@@ -33,9 +32,7 @@ def stream_audio():
             "-i",
             get_stream(url),
             "-f",
-            "wav",
-            "-acodec",
-            "pcm_u8",
+            "dfpwm",
             "-ac",
             "1",
             "-ar",
@@ -50,7 +47,7 @@ def stream_audio():
             "-"
         ],
         stdout=PIPE,
-        #stderr=DEVNULL,
+        stderr=DEVNULL,
         bufsize=8*16 # TODO: Find optimal buffer size
     )
 
@@ -65,13 +62,6 @@ def stream_audio():
 
     return Response(
         generate(),
-        mimetype="audio/pcm;rate=48000;channels=1",
-        headers={"Content-Disposition": 'attachment;filename="audio.pcm"'}
+        mimetype="audio/dfpwm;rate=48000;channels=1",
+        headers={"Content-Disposition": 'attachment;filename="audio.dfpwm"'}
     )
-
-def main():
-    # TODO: auth and prio
-    app.run(host="0.0.0.0", port=8000) # TODO: run threaded and use real wsgi server
-
-if __name__ == "__main__":
-    main()
