@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, stream_with_context
 from subprocess import Popen, PIPE, DEVNULL
 from yt_dlp import YoutubeDL
 
@@ -20,34 +20,44 @@ def get_stream(url: str) -> str:
 
 app = Flask(__name__)
 
-# TODO: support stereo and 5.1
+# TODO: support stereo and 5.1 (if possible)
+# TODO: Allow real seeking (if possible)
 
 @app.route('/audio.dfpwm')
 def stream_audio():
+    # TODO: add option to seek before
     url = request.args.get("url")
-    process = Popen([
-        "ffmpeg",
-        "-i",
-        get_stream(url),
-        "-f",
-        "dfpwm",
-        "-ac",
-        "1",
-        "-ar",
-        "48000",
-        "-"
-    ], stdout=PIPE, stderr=DEVNULL)
+    process = Popen(
+    [
+            "ffmpeg",
+            "-i",
+            get_stream(url),
+            "-f",
+            "dfpwm",
+            "-ac",
+            "1",
+            "-ar",
+            "48000",
+            # TODO: test those boys out
+            #"-preset", "fast",
+            #"-tune", "zerolatency",
+            #"-threads", "4",
+            "-"
+        ],
+        stdout=PIPE,
+        stderr=DEVNULL,
+        bufsize=8*16 # TODO: Find optimal buffer size
+    )
 
+    @stream_with_context
     def generate():
-        # TODO: dont process more than needed
         while True:
-            # TODO: need to buffer
-            data = process.stdout.read(16)
+            data = process.stdout.read(8*16)
+            # TODO: Fix Noise at EOF
             if not data:
                 break
             yield data
 
-    # TODO: what is stream_with_context
     return Response(
         generate(),
         mimetype="audio/dfpwm;rate=48000;channels=1",
@@ -55,7 +65,8 @@ def stream_audio():
     )
 
 def main():
-    app.run(host="0.0.0.0", port=8000)
+    # TODO: auth and prio
+    app.run(host="0.0.0.0", port=8000) # TODO: run threaded and use real wsgi server
 
 if __name__ == "__main__":
     main()
