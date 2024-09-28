@@ -94,7 +94,7 @@ On demand streaming and conversion service for CC: T. \
 
 ## Public Servers
 
-- **Status:** Coming soon™
+- https://wavestream-w2q4.onrender.com
 
 [Musicify]: https://github.com/knijn/musicify
 [AUKit]: https://github.com/MCJack123/AUKit
