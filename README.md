@@ -41,7 +41,7 @@ On demand streaming and conversion service for CC: T. \
 
 ## Server requirements
 
-- [Pyton 3]
+- [Python 3]
 - [FFmpeg 5.1+]
 - [requirements.txt]
 
