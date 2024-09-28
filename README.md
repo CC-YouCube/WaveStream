@@ -1,59 +1,107 @@
 # WaveStream
 
 On demand streaming and conversion service for CC: T. \
-This project is currently in developed and will become the base of YC 2.0 when video streaming is supported.
+**This project is currently in development** and will become the base of YC 2.0 when video streaming is supported.
 
-## Current Api endpoints
+---
 
-### /img.nft
+## Current API Endpoints
 
-nft converter
+### **Image NFT Converter**
 
-params:
-- url
-- width (default: 51) 
-- height (default: 19)
-- dither (default: false)
+**Endpoint:** `/api/v1/img/nft`  
+**Description:** Converts images to NFT format.
 
-### /audio.dfpwm
+| Parameter | Type     | Default    | Description                                  |
+|-----------|----------|------------|----------------------------------------------|
+| url       | string   | -          | The URL of the image to convert.             |
+| width     | integer  | **51**     | The desired width of the output image.       |
+| height    | integer  | **19**     | The desired height of the output image.      |
+| dither    | boolean  | **false**  | Enables dithering for the image.             |
 
-dfpwm streaming
+### **DFPWM Streaming**
 
-params:
-- url
+**Endpoint:** `/api/v1/audio/dfpwm`  
+**Description:** Streams audio in DFPWM format.
 
-### /audio.pcm
+| Parameter | Type     | Default  | Description                                         |
+|-----------|----------|----------|-----------------------------------------------------|
+| url       | string   | -        | The URL to extract from or an youtube search quarry |
 
-pcm u8 wav streaming
+### **PCM U8 WAV Streaming**
 
-params:
-- url
+**Endpoint:** `/api/v1/audio/pcm`  
+**Description:** Streams audio in PCM U8 WAV format.
 
-## clients
+| Parameter | Type     | Default  | Description                                         |
+|-----------|----------|----------|-----------------------------------------------------|
+| url       | string   | -        | The URL to extract from or an youtube search quarry |
 
-### speaker.lua (integrated in CC: T)
+---
 
-speaker play <url> [speaker]
+## Server requirements
 
-### [AUKit](https://github.com/MCJack123/AUKit)
+- [Pyton 3]
+- [FFmpeg 5.1+]
+- [requirements.txt]
 
-#### for pcm
+---
 
-austream <url> type=pcm,dataType=signed,streamData=true
+## Displaying nft
 
-#### for dfpwm
+### [cc.image.nft]
 
-austream <url> type=dfpwm,streamData=true
+**Example soon™**
+
+### [Pixelbox Lite] / [Pixelbox Modules]
+
+**Example soon™**
+
+---
+
+## Audio Clients
+
+### [Speaker.lua] (Integrated in CC: T)
+
+- **Command:** `speaker play <url> [speaker]`
+
+### [AUKit]
+
+#### For PCM
+
+- **Command:** `austream <url> type=pcm,dataType=signed,streamData=true`
+
+#### For DFPWM
+
+- **Command:** `austream <url> type=dfpwm,streamData=true`
 
 ### YouCube
 
-Support coming soon
+- **Status:** Coming soon™
 
-### Musicify
+### [Musicify]
 
-Support coming soon maby
+- **Status:** Maybe Coming soon™
 
+---
+
+
+## Video Clients
+
+**Coming soon™**
+
+---
 
 ## Public Servers
 
-Soon TM
+- **Status:** Coming soon™
+
+[Musicify]: https://github.com/knijn/musicify
+[AUKit]: https://github.com/MCJack123/AUKit
+[Speaker.lua]: https://github.com/cc-tweaked/CC-Tweaked/blob/mc-1.20.x/projects/core/src/main/resources/data/computercraft/lua/rom/programs/fun/speaker.lua
+[cc.image.nft]: https://tweaked.cc/library/cc.image.nft.html
+[Pixelbox Lite]: https://github.com/9551-Dev/pixelbox_lite
+[Pixelbox Modules]: https://github.com/9551-Dev/pixelbox_modules
+[Pyton 3]: https://www.python.org/downloads/
+[FFmpeg 5.1+]: https://ffmpeg.org/
+[requirements.txt]: requirements.txt
