@@ -1,9 +1,11 @@
 FROM alpine:latest
 
-RUN apk add ffmpeg py3-pip; pip install --break-system-packages flask yt-dlp
+ADD requirements.txt .
 
-ADD tmp/dfpwm.py .
+RUN apk add ffmpeg py3-pip; pip install --break-system-packages -Ur requirements.txt
+
+ADD src .
 
 EXPOSE 8000
 
-CMD ["python", "dfpwm.py"]
+CMD ["python", "app.py"]
