@@ -41,7 +41,7 @@ On demand streaming and conversion service for CC: T. \
 
 ## Server requirements
 
-- [Pyton 3]
+- [Python 3]
 - [FFmpeg 5.1+]
 - [requirements.txt]
 
@@ -102,6 +102,6 @@ On demand streaming and conversion service for CC: T. \
 [cc.image.nft]: https://tweaked.cc/library/cc.image.nft.html
 [Pixelbox Lite]: https://github.com/9551-Dev/pixelbox_lite
 [Pixelbox Modules]: https://github.com/9551-Dev/pixelbox_modules
-[Pyton 3]: https://www.python.org/downloads/
+[Python 3]: https://www.python.org/downloads/
 [FFmpeg 5.1+]: https://ffmpeg.org/
 [requirements.txt]: requirements.txt
