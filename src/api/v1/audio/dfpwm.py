@@ -22,6 +22,9 @@ def get_stream(url: str) -> str:
 # TODO: support stereo and 5.1 (if possible)
 # TODO: Allow real seeking (if possible)
 
+# TODO: Find optimal buffer/chunk size
+CHUNK_SIZE=8*16
+
 @audio_bp.route('/dfpwm')
 def stream_dfpwm():
     # TODO: add option to seek before
@@ -48,13 +51,13 @@ def stream_dfpwm():
         ],
         stdout=PIPE,
         stderr=DEVNULL,
-        bufsize=8*16 # TODO: Find optimal buffer size
+        bufsize=CHUNK_SIZE
     )
 
     @stream_with_context
     def generate():
         while True:
-            data = process.stdout.read(8*16)
+            data = process.stdout.read(CHUNK_SIZE)
             # TODO: Fix Noise at EOF
             if not data:
                 break
