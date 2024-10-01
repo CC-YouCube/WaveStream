@@ -1,37 +1,23 @@
 from flask import Response, request, stream_with_context, current_app
 from subprocess import Popen, PIPE, DEVNULL
-from yt_dlp import YoutubeDL
 from . import audio_bp
-
-ydl_opts = {
-    "format": "worstaudio*",
-    "quiet": True,
-    "default_search": "auto",
-    "extract_flat": "in_playlist"
-}
-
-# TODO: do some validation on the url
-# TODO: disallow connection to localhost
-# TODO: fix hls
-# TODO; auth, spotify, stremlink
-def get_stream(url: str) -> str:
-    with YoutubeDL(ydl_opts) as ydl:
-        data = ydl.extract_info(url, download=False)
-        # TODO: very good code ;)
-        if data.get("_type") == "playlist":
-            return ydl.extract_info(data.get("entries")[0].get("url"), download=False).get("url")
-        return data.get("url")
+from wavestream.utils import get_stream, decode_urlsafe_base64
 
 # TODO: support stereo and 5.1 (if possible)
 # TODO: Allow real seeking (if possible)
 
 # TODO: Find optimal buffer/chunk size
 CHUNK_SIZE=8*16
+bufsize = CHUNK_SIZE*2 # Hope this makes sense
 
 @audio_bp.route('/dfpwm')
 def stream_dfpwm():
     # TODO: add option to seek before
     url = request.args.get("url")
+    url_is_base64 = request.args.get("urlIsBase64", "false").lower() == "true"
+    if url_is_base64:
+        url = decode_urlsafe_base64(url)
+
     process = Popen(
     [
             "ffmpeg",
@@ -54,7 +40,7 @@ def stream_dfpwm():
         ],
         stdout=PIPE,
         stderr=None if current_app.debug else DEVNULL,
-        bufsize=CHUNK_SIZE*2
+        bufsize=bufsize
     )
 
     @stream_with_context

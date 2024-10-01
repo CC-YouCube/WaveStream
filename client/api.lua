@@ -42,8 +42,6 @@ local function urlsafe_b64encode(str)
     return retval
 end
 
-print(urlsafe_b64encode("Hellohgf"))
-
 --- API
 ---@class API
 ---@field host string The host of the server
@@ -98,9 +96,9 @@ function API:nft(url, width, height, dither)
     expect(4, params.dither, "boolean", "nil")
 
     local protool = self.tls and "https" or "http"
-    -- TODO: add option to use urlsafe_b64encode
+    -- TODO: add option to disable urlsafe_b64encode
     -- TODO: add api for adding params
-    local url_builder = {protool, "://", self.host, "/api/v1/img/nft?url=", url_encode(params.url)}
+    local url_builder = {protool, "://", self.host, "/api/v1/img/nft?url=", urlsafe_b64encode(params.url), "&urlIsBase64=true"}
 
     if width then table.insert(url_builder, "&width="..params.width) end
     if height then table.insert(url_builder, "&height="..params.height) end
@@ -119,7 +117,7 @@ end
 function API:dfpwm(url)
     expect(1, url, "string")
     local protool = self.tls and "https" or "http"
-    return protool.."://"..self.host.."/api/v1/audio/dfpwm?url="..url_encode(url)
+    return protool.."://"..self.host.."/api/v1/audio/dfpwm?url="..urlsafe_b64encode(url).."&urlIsBase64=true"
 end
 
 return setmetatable(API, {

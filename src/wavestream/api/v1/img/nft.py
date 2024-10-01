@@ -3,6 +3,7 @@ import requests
 import numpy as np
 from flask import Response, request
 from PIL import Image
+from wavestream.utils import decode_urlsafe_base64
 
 CC_COLORS = [
     (240, 240, 240), (242, 178, 51), (229, 127, 216), (153, 178, 242),
@@ -24,6 +25,9 @@ def get_data():
     height = int(request.args.get("height", 19))
     dither = request.args.get("dither", "false").lower() == "true"
     url = request.args.get("url")
+    url_is_base64 = request.args.get("urlIsBase64", "false").lower() == "true"
+    if url_is_base64:
+        url = decode_urlsafe_base64(url)
 
     img = Image.open(requests.get(url, stream=True).raw)
     quantized_image = img.resize((width, height)).convert("RGB").quantize(palette=palette, dither=dither)

@@ -7,5 +7,6 @@ RUN apk add ffmpeg py3-pip; pip install --break-system-packages -Ur requirements
 ADD src .
 
 EXPOSE 8000
+ENV HOST="0.0.0.0"
 
-CMD ["python", "app.py"]
+CMD ["python", "-m", "wavestream"]

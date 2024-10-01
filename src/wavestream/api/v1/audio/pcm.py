@@ -1,24 +1,7 @@
 from flask import Response, request, stream_with_context, current_app
 from subprocess import Popen, PIPE, DEVNULL
-from yt_dlp import YoutubeDL
 from . import audio_bp
-
-ydl_opts = {
-    "format": "worstaudio*",
-    "quiet": True,
-    "default_search": "auto",
-    "extract_flat": "in_playlist"
-}
-
-# TODO: move to module
-# TODO; auth, spotify, stremlink
-def get_stream(url: str) -> str:
-    with YoutubeDL(ydl_opts) as ydl:
-        data = ydl.extract_info(url, download=False)
-        # TODO: very good code ;)
-        if data.get("_type") == "playlist":
-            return ydl.extract_info(data.get("entries")[0].get("url"), download=False).get("url")
-        return data.get("url")
+from wavestream.utils import get_stream, decode_urlsafe_base64
 
 # TODO: support stereo and 5.1 (if possible)
 # TODO: Allow real seeking (if possible)
@@ -138,23 +121,17 @@ def get_stream(url: str) -> str:
  DEAI.S pcm_u8               PCM unsigned 8-bit
 """
 
-""""
-dataTypeMap = {
-    "signed": 's',
-    "unsigned": 'u',
-    "float": 'f'
-}"""
-
 # TODO: Find optimal buffer/chunk size
 CHUNK_SIZE=8*16
+bufsize = CHUNK_SIZE*2 # Hope this makes sense
 
 @audio_bp.route('/pcm')
 def stream_pcm():
     # TODO: add option to seek before
     url = request.args.get("url")
-    #dataType = request.args.get("dataType", "signed")
-
-    #print(dataTypeMap[dataType])
+    url_is_base64 = request.args.get("urlIsBase64", "false").lower() == "true"
+    if url_is_base64:
+        url = decode_urlsafe_base64(url)
 
     process = Popen(
     [
@@ -162,9 +139,9 @@ def stream_pcm():
             "-i",
             get_stream(url),
             "-f",
-            "wav", #dataTypeMap[dataType] + "8", # TODO: support raw
+            "wav", # TODO: should be raw
             "-acodec",
-            "pcm_u8", #"pcm_" + dataTypeMap[dataType] + "8", # TODO: support all
+            "pcm_u8", # TODO: support all
             "-ac",
             "1",
             "-ar",
@@ -180,7 +157,7 @@ def stream_pcm():
         ],
         stdout=PIPE,
         stderr=None if current_app.debug else DEVNULL,
-        bufsize=CHUNK_SIZE*2
+        bufsize=bufsize
     )
 
     @stream_with_context

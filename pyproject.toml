@@ -1,0 +1,9 @@
+[project]
+name = "wavestream"
+version = "0.0.0"
+dynamic = ["dependencies"]
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {file = "LICENSE.txt"}
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}

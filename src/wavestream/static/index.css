@@ -1,0 +1,75 @@
+:root {
+    --white: #F0F0F0;
+    --orange: #F2B233;
+    --magenta: #E57FD8;
+    --light-blue: #99B2F2;
+    --yellow: #DEDE6C;
+    --lime: #7FCC19;
+    --pink: #F2B2CC;
+    --gray: #4C4C4C;
+    --light-gray: #999999;
+    --cyan: #4C99B2;
+    --purple: #B266E5;
+    --blue: #3366CC;
+    --brown: #7F664C;
+    --green: #57A64E;
+    --red: #CC4C4C;
+    --black: #111111;
+}
+
+@font-face {
+    font-family: 'ComputerCraft';
+    src: url('fonts/ComputerCraft.woff2') format('woff2'),
+         url('fonts/ComputerCraft.woff') format('woff'),
+         url('fonts/ComputerCraft.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    font-family: ComputerCraft;
+    background-color: var(--black);
+    color: var(--white);
+}
+
+a {
+    color: var(--light-blue);
+    text-decoration: none;
+}
+
+a:visited {
+    color: var(--blue);
+}
+
+a:active {
+    color: var(--cyan);
+}
+
+h1 {
+    color: var(--yellow);
+}
+
+b {
+    font-weight: normal;
+    color: var(--orange);
+}
+
+.blinking-underline {
+    display: inline-block;
+    color: var(--white);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+span {
+    color: var(--yellow);
+}
