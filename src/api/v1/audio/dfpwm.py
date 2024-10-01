@@ -1,4 +1,4 @@
-from flask import Response, request, stream_with_context
+from flask import Response, request, stream_with_context, current_app
 from subprocess import Popen, PIPE, DEVNULL
 from yt_dlp import YoutubeDL
 from . import audio_bp
@@ -10,6 +10,9 @@ ydl_opts = {
     "extract_flat": "in_playlist"
 }
 
+# TODO: do some validation on the url
+# TODO: disallow connection to localhost
+# TODO: fix hls
 # TODO; auth, spotify, stremlink
 def get_stream(url: str) -> str:
     with YoutubeDL(ydl_opts) as ydl:
@@ -50,8 +53,8 @@ def stream_dfpwm():
             "-"
         ],
         stdout=PIPE,
-        stderr=DEVNULL,
-        bufsize=CHUNK_SIZE
+        stderr=None if current_app.debug else DEVNULL,
+        bufsize=CHUNK_SIZE*2
     )
 
     @stream_with_context

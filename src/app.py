@@ -17,5 +17,5 @@ if __name__ == '__main__':
     app.run(
         host=getenv("HOST"),
         port=getenv("PORT"),
-        debug=True # TODO: disable in prod
+        debug=getenv("DEBUG")
     ) # TODO: run threaded and use real wsgi server

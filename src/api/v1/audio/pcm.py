@@ -1,4 +1,4 @@
-from flask import Response, request, stream_with_context
+from flask import Response, request, stream_with_context, current_app
 from subprocess import Popen, PIPE, DEVNULL
 from yt_dlp import YoutubeDL
 from . import audio_bp
@@ -179,8 +179,8 @@ def stream_pcm():
             "-"
         ],
         stdout=PIPE,
-        stderr=DEVNULL, # TODO: automatically maek Null when in debug
-        bufsize=CHUNK_SIZE
+        stderr=None if current_app.debug else DEVNULL,
+        bufsize=CHUNK_SIZE*2
     )
 
     @stream_with_context

@@ -7,7 +7,7 @@ local function char_to_hex(char)
     return string.format("%%%02X", string.byte(char))
 end
 
--- TODO: maybe make this function "public"
+-- TODO: make this function "public"
 --- Encode url hopefully according to RFC 3986
 ---@param url string The URL to encode
 ---@return string The URL-encoded version of the input string
@@ -15,6 +15,34 @@ local function url_encode(url)
     expect(1, url, "string")
     return (url:gsub("([^%w%-%.%_%~])", char_to_hex):gsub(" ", "%%20"))
 end
+
+-- TODO: make this function "public"
+-- Definitely not base on https://github.com/Phoenix-ComputerCraft/libsystem-craftos/blob/713e580e6a9229ca1e843b4dcc9bb3c3fde7c3ca/serialization.lua#L13-L36
+local b64str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+--- Encodes a binary string into urlsafe Base64 (RFC 4648) -> No padding and replace `+` with `-` and `/` with `_`
+---@param str string The string to encode
+---@return string The string's representation in Base64
+local function urlsafe_b64encode(str)
+    expect(1, str, "string")
+    local retval = ""
+    for s in str:gmatch "..." do
+        local n = s:byte(1) * 65536 + s:byte(2) * 256 + s:byte(3)
+        local a, b, c, d = bit32.extract(n, 18, 6), bit32.extract(n, 12, 6), bit32.extract(n, 6, 6), bit32.extract(n, 0, 6)
+        retval = retval .. b64str:sub(a+1, a+1) .. b64str:sub(b+1, b+1) .. b64str:sub(c+1, c+1) .. b64str:sub(d+1, d+1)
+    end
+    if #str % 3 == 1 then
+        local n = str:byte(-1)
+        local a, b = bit32.rshift(n, 2), bit32.lshift(bit32.band(n, 3), 4)
+        retval = retval .. b64str:sub(a+1, a+1) .. b64str:sub(b+1, b+1)
+    elseif #str % 3 == 2 then
+        local n = str:byte(-2) * 256 + str:byte(-1)
+        local a, b, c, _ = bit32.extract(n, 10, 6), bit32.extract(n, 4, 6), bit32.lshift(bit32.extract(n, 0, 4), 2)
+        retval = retval .. b64str:sub(a+1, a+1) .. b64str:sub(b+1, b+1) .. b64str:sub(c+1, c+1)
+    end
+    return retval
+end
+
+print(urlsafe_b64encode("Hellohgf"))
 
 --- API
 ---@class API
@@ -34,14 +62,27 @@ function API.new(host, tls)
     }, API)
 end
 
+-- TODO: make this function "public"
+-- TODO: maby check for terminate event
+--- Very advanced function that will not allow you to leave a file or http connection open!
+---@param block function The
+---@param file table Any table that has a close function
+---@return any The result from the block
+local function with(file, block)
+    local success, result = pcall(block, file)
+    file:close()
+    if not success then error(result) end
+    return result
+end
+
 --- Converts image from url to NFT image
----@overload fun(params:table): string
----@overload fun(url:string, size:table, dither:boolean): string
+---@overload fun(params:table): string|nil,string|nil,file|nil
+---@overload fun(url:string, size:table<number, number>, dither:boolean): string|nil,string|nil,file|nil
 ---@param url string The URL of the image to convert
 ---@param width number|nil The desired width of the output image
 ---@param height number|nil The desired height of the output image
 ---@param dither boolean|nil Enables dithering for the image
----@return string The nft image
+---@return string|nil,string|nil,file|nil
 function API:nft(url, width, height, dither)
     local params = type(url) == "table" and url or { url = url, width = width, height = height, dither = dither }
     if type(params.width) == "table" then
@@ -57,7 +98,7 @@ function API:nft(url, width, height, dither)
     expect(4, params.dither, "boolean", "nil")
 
     local protool = self.tls and "https" or "http"
-    -- TODO: add option to urlsafe_b64encode
+    -- TODO: add option to use urlsafe_b64encode
     -- TODO: add api for adding params
     local url_builder = {protool, "://", self.host, "/api/v1/img/nft?url=", url_encode(params.url)}
 
@@ -65,22 +106,20 @@ function API:nft(url, width, height, dither)
     if height then table.insert(url_builder, "&height="..params.height) end
     if dither then table.insert(url_builder, "&dither="..tostring(params.dither)) end
 
-    -- TODO: Error handling
-    local request = http.get(table.concat(url_builder))
-    local response = request.readAll()
-    request.close()
-    return response
+    local request, err, err_response = http.get(table.concat(url_builder))
+    if request then
+        return with(request, function()
+            return request.readAll()
+        end)
+    end
+    return request, err, err_response
 end
 
---- Very advanced function that will not allow you to leave a file or http connection open!
----@param block function The
----@param file table Any table that has a close function
----@return any The result from the block
-local function with(file, block)
-    local success, result = pcall(block, file)
-    file:close()
-    if not success then error(result) end
-    return result
+-- TODO: WIP
+function API:dfpwm(url)
+    expect(1, url, "string")
+    local protool = self.tls and "https" or "http"
+    return protool.."://"..self.host.."/api/v1/audio/dfpwm?url="..url_encode(url)
 end
 
 return setmetatable(API, {

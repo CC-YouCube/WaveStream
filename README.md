@@ -9,8 +9,9 @@ On demand streaming and conversion service for CC: T. \
 
 ### **Image NFT Converter**
 
-**Endpoint:** `/api/v1/img/nft`  
-**Description:** Converts images to NFT format.
+**Endpoint:** `/api/v1/img/nft` \
+**Description:** Converts images to NFT format. \
+**Status:** **Stable** but dither param will change and max width and height will be added
 
 | Parameter | Type     | Default    | Description                                  |
 |-----------|----------|------------|----------------------------------------------|
@@ -21,8 +22,9 @@ On demand streaming and conversion service for CC: T. \
 
 ### **DFPWM Streaming**
 
-**Endpoint:** `/api/v1/audio/dfpwm`  
-**Description:** Streams audio in DFPWM format.
+**Endpoint:** `/api/v1/audio/dfpwm` \
+**Description:** Streams audio in DFPWM format. \
+**Status:** **Stable** but internal chunk size will change and automatic passing to yt-dlp
 
 | Parameter | Type     | Default  | Description                                         |
 |-----------|----------|----------|-----------------------------------------------------|
@@ -30,8 +32,9 @@ On demand streaming and conversion service for CC: T. \
 
 ### **PCM U8 WAV Streaming**
 
-**Endpoint:** `/api/v1/audio/pcm`  
-**Description:** Streams audio in PCM U8 WAV format.
+**Endpoint:** `/api/v1/audio/pcm` \
+**Description:** Streams audio in PCM U8 WAV format. \
+**Status:** **Unstable**
 
 | Parameter | Type     | Default  | Description                                         |
 |-----------|----------|----------|-----------------------------------------------------|
@@ -44,6 +47,7 @@ On demand streaming and conversion service for CC: T. \
 - [Python 3]
 - [FFmpeg 5.1+]
 - [requirements.txt]
+- ~~[sanjuuni 0.6+]~~
 
 ---
 
@@ -75,9 +79,10 @@ On demand streaming and conversion service for CC: T. \
 
 - **Command:** `austream <url> type=dfpwm,streamData=true`
 
-### YouCube
+### WaveStream
 
-- **Status:** Coming soon™
+- **Status:** WIP
+- **Command:** `wavestream <short_url>`
 
 ### [Musicify]
 
@@ -88,13 +93,15 @@ On demand streaming and conversion service for CC: T. \
 
 ## Video Clients
 
-**Coming soon™**
+### [YouCube]
+
+- **Status:** Coming soon™
 
 ---
 
 ## Public Servers
 
-- https://wavestream-w2q4.onrender.com
+- https://wavestream-w2q4.onrender.com (Development Server)
 
 [Musicify]: https://github.com/knijn/musicify
 [AUKit]: https://github.com/MCJack123/AUKit
@@ -105,3 +112,5 @@ On demand streaming and conversion service for CC: T. \
 [Python 3]: https://www.python.org/downloads/
 [FFmpeg 5.1+]: https://ffmpeg.org/
 [requirements.txt]: requirements.txt
+[sanjuuni 0.6+]: https://github.com/MCJack123/sanjuuni
+[YouCube]: https://github.com/CC-YouCube/client
