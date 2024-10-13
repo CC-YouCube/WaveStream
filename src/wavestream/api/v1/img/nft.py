@@ -20,6 +20,7 @@ palette.putpalette(
 
 @img_bp.route('/nft')
 def get_data():
+    # TODO: add more dither methods
     # TODO: Set max width, height
     width = int(request.args.get("width", 51))
     height = int(request.args.get("height", 19))

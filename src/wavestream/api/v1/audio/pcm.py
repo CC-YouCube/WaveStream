@@ -174,3 +174,4 @@ def stream_pcm():
         mimetype="audio/pcm;rate=48000;channels=1",
         headers={"Content-Disposition": 'attachment;filename="audio.pcm"'}
     )
+# application/octet-stream

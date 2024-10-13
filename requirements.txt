@@ -1,5 +1,7 @@
-yt-dlp~=2024.8.6
+yt-dlp~=2024.10.7
 requests~=2.32.3
-numpy~=2.1.1
+numpy~=2.1.2
 Flask~=3.0.3
 pillow~=10.4.0
+#streamlink~=6.11.0
+#hitherdither @ git+https://github.com/hbldh/hitherdither@0f3bbc4
