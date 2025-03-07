@@ -10,6 +10,10 @@ ydl_opts = {
     "cookiefile": getenv("COOKIES")
 }
 
+if getenv("TOR"):
+    print("Using Tor!")
+    ydl_opts["proxy"] = "socks5://127.0.0.1:9050"
+
 # TODO: do some validation on the url
 # TODO: disallow connection to localhost
 # TODO: fix hls
