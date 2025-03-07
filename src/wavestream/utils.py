@@ -1,13 +1,16 @@
 from base64 import urlsafe_b64decode
 from yt_dlp import YoutubeDL
 from os import getenv
+import shutil
+
+shutil.copy(getenv("COOKIES"), "cookies.txt")
 
 ydl_opts = {
     "format": "worstaudio*",
     "quiet": True,
     "default_search": "auto",
     "extract_flat": "in_playlist",
-    "cookiefile": getenv("COOKIES"),
+    "cookiefile": "cookies.txt",
     "proxy": getenv("PROXY")
 }
 
