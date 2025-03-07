@@ -7,7 +7,8 @@ ydl_opts = {
     "quiet": True,
     "default_search": "auto",
     "extract_flat": "in_playlist",
-    "cookiefile": getenv("COOKIES")
+    "cookiefile": getenv("COOKIES"),
+    "proxy": getenv("PROXY")
 }
 
 if getenv("TOR"):
