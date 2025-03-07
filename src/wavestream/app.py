@@ -17,6 +17,10 @@ def index():
 def page_not_found(e):
     return app.send_static_file('404.html'), 404
 
+@app.errorhandler(500)
+def page_not_found(e):
+    return app.send_static_file('500.html'), 500
+
 def main():
     app.run(
         host=getenv("HOST"),
