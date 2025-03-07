@@ -13,4 +13,5 @@ ADD entrypoint.sh /
 EXPOSE 8000
 ENV HOST="0.0.0.0"
 
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
+CMD ["python", "-m", "wavestream"]
